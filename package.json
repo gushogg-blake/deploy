@@ -7,5 +7,8 @@
 	"dependencies": {
 		"flowfs": "^4.0.0",
 		"yargs": "^6.5.0"
+	},
+	"bin": {
+		"deploy": "./src/commands/deploy.js"
 	}
 }

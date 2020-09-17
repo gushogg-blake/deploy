@@ -1,15 +1,15 @@
 let fs = require("flowfs");
 let cmd = require("./utils/cmd");
 
-module.exports = function(project, deployment) {
+module.exports = function(server, project, deployment) {
 	let here = fs(__dirname);
 	let root = fs(project.root);
 	let serverRoot = "~/apps/" + project.name + "/" + deployment;
 	
-	async function remoteScript(server, script, run) {
+	async function remoteScript(script, run) {
 		let remotePath = `/tmp/deploy-${fs(script).name}}`;
 		
-		await copy(server, script, remotePath);
+		await copy(script, remotePath);
 		await ssh(`chmod +x ${remotePath}`);
 		await run(remotePath);
 		await ssh(`rm ${remotePath}`);
@@ -35,23 +35,24 @@ module.exports = function(project, deployment) {
 		}
 	}
 	
-	async function remoteHook(server, name) {
-		await remoteScript(server, here.child("remoteScripts", "run-hook").path, function(path) {
+	async function remoteHook(name) {
+		await remoteScript(here.child("remoteScripts", "run-hook").path, function(path) {
 			return ssh(`${path} ${name} ${deployment}`);
 		});
 	}
 	
-	async function ssh(server, command) {
+	async function ssh(command) {
 		await cmd(`ssh ${server} "cd ${serverRoot}; ${command}"`);
 	}
 	
-	async function copy(server, local, remote=null) {
+	async function copy(local, remote=null) {
 		await cmd(`scp -pr ${local} ${server}:${remote || serverRoot + "/"}`);
 	}
 	
 	return {
 		localHook,
 		remoteHook,
+		remoteScript,
 		copy,
 		ssh,
 	};

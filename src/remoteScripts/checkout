@@ -15,7 +15,7 @@ fi
 rm -rf $root
 mkdir -p $root
 
-cd $HOME/git/$project
+cd $HOME/git/$project.git
 
 GIT_WORK_TREE=$root git checkout -f $ref
 

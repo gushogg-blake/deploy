@@ -2,10 +2,11 @@
 
 let fs = require("flowfs");
 let yargs = require("yargs");
+let verify = require("../utils/verify");
 let project = require("../__project");
+let {ECOSYSTEM} = require("../filenames");
 let Local = require("../Local");
 let Remote = require("../Remote");
-let {ECOSYSTEM} = require("./filenames");
 
 /*
 assumes:
@@ -20,20 +21,40 @@ assumes:
 	
 	verify.appInEcosystem(project, deployment);
 	
-	let local = Local(project, deployment);
+	let local = Local(server, project, deployment);
 	let remote = Remote(server, project, deployment);
+	
+	console.log("Pre-deploy hook");
 	
 	await local.hook("pre-deploy");
 	
-	await remote.checkout();
+	console.log("Remote: checking out repo");
 	
-	await local.copy(server, "secrets");
+	await remote.checkout(ref);
 	
-	await local.copy(server, ECOSYSTEM);
+	if (await fs("deploy/secrets").exists()) {
+		console.log("Copying secrets");
+		
+		await local.copy("deploy/secrets", "secrets/" + project.name);
+	}
+	
+	console.log("Copying ecosystem file");
+	
+	await local.copy(ECOSYSTEM);
+	
+	console.log("Remote: npm install");
 	
 	await remote.cmd("npm install");
 	
+	console.log("Post-checkout hook");
+	
+	await local.hook("post-checkout");
+	
+	console.log("Remote: pre-deploy hook");
+	
 	await remote.hook("pre-deploy");
+	
+	console.log("Remote: start/restart");
 	
 	await remote.startOrRestart();
 })();

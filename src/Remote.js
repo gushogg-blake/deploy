@@ -9,10 +9,10 @@ module.exports = function(server, project, deployment) {
 		remoteHook,
 		remoteScript,
 		ssh,
-	} = Functions(project, deployment);
+	} = Functions(server, project, deployment);
 	
 	async function checkout(ref) {
-		await remoteScript(server, here.child("remoteScripts", "checkout").path, function(path) {
+		await remoteScript(here.child("remoteScripts", "checkout").path, function(path) {
 			return ssh(`${path} ${project.name} ${deployment} ${ref}`);
 		});
 	}
@@ -22,11 +22,11 @@ module.exports = function(server, project, deployment) {
 	}
 	
 	async function run(command) {
-		await ssh(server, command);
+		await ssh(command);
 	}
 	
 	async function startOrRestart() {
-		await ssh(`pm2 startOrRestart ${ECOSYSTEM} --only ${deployment}`);
+		await ssh(`pm2 startOrRestart ${ECOSYSTEM} --only ${project.name}-${deployment}`);
 	}
 	
 	return {
