@@ -2,7 +2,8 @@
 
 let fs = require("flowfs");
 let yargs = require("yargs");
-let verify = require("../utils/verify");
+let verify = require("../utils/verify.js");
+let findAppConfig = require("../utils/findAppConfig");
 let project = require("../__project");
 let {ECOSYSTEM} = require("../filenames");
 let Local = require("../Local");
@@ -21,6 +22,7 @@ assumes:
 	
 	verify.appInEcosystem(project, deployment);
 	
+	let app = findAppConfig(project, deployment);
 	let local = Local(server, project, deployment);
 	let remote = Remote(server, project, deployment);
 	
@@ -31,6 +33,16 @@ assumes:
 	console.log("Remote: checking out repo");
 	
 	await remote.checkout(ref);
+	
+	console.log("Creating .env file");
+	
+	let env = Object.entries(app.env).map(entry => entry.join("=")).join("\n") + "\n";
+	
+	await fs("/tmp/.env").write(env);
+	
+	console.log("Copying .env file");
+	
+	await local.copy("/tmp/.env");
 	
 	if (await fs("deploy/secrets").exists()) {
 		console.log("Copying secrets");
