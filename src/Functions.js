@@ -31,13 +31,13 @@ module.exports = function(server, project, deployment) {
 		let hook = await findHook("local", name);
 		
 		if (hook) {
-			await cmd(`${hook} ${deployment}`);
+			await cmd(`bash ${hook} ${project.name} ${deployment}`);
 		}
 	}
 	
 	async function remoteHook(name) {
-		await remoteScript(here.child("remoteScripts", "run-hook").path, function(path) {
-			return ssh(`${path} ${name} ${deployment}`);
+		await remoteScript(here.child("remoteScripts", "hook").path, function(path) {
+			return ssh(`${path} ${name} ${project.name} ${deployment}`);
 		});
 	}
 	
