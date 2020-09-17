@@ -1,0 +1,10 @@
+{
+	"name": "deploy",
+	"description": "Deployment scripts for Node apps",
+	"version": "1.0.0",
+	"author": "Gus Hogg-Blake",
+	"private": true,
+	"dependencies": {
+		"yargs": "~6.5.0"
+	}
+}
