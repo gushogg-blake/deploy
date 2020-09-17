@@ -1,0 +1,24 @@
+#!/bin/bash
+
+project=$1
+deployment=$2
+ref=$3
+
+root=$HOME/apps/$project/$deployment
+nodeModules=$root/node_modules
+tmpNodeModules=/tmp/$project-$deployment-node_modules
+
+if [ -d $nodeModules ]; then
+	mv $nodeModules $tmpNodeModules
+fi
+
+rm -rf $root
+mkdir -p $root
+
+cd $HOME/git/$project
+
+GIT_WORK_TREE=$root git checkout -f $ref
+
+if [ -d $tmpNodeModules ]; then
+	mv $tmpNodeModules $nodeModules
+fi

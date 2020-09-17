@@ -2,12 +2,10 @@
 
 let fs = require("flowfs");
 let yargs = require("yargs");
-let error = require("../utils/error");
+let project = require("../__project");
 let Local = require("../Local");
 let Remote = require("../Remote");
-let {ECOSYSTEM} = require("../filenames");
-let ecosystem = require("../ecosystem");
-let project = require("../package").name;
+let {ECOSYSTEM} = require("./filenames");
 
 /*
 assumes:
@@ -18,24 +16,22 @@ assumes:
 */
 
 (async function() {
-	let [deployment, ref="master"] = yargs.argv._;
-	let appName = project + "-" + deployment;
-	let local = new Local(project, deployment);
-	let remote = new Remote(project, deployment, ref);
+	let [server, deployment, ref="master"] = yargs.argv._;
 	
-	if (!ecosystem.apps.some(app => app.name === appName)) {
-		error("No app " + appName + " found in " + ECOSYSTEM);
-	}
+	verify.appInEcosystem(project, deployment);
+	
+	let local = Local(project, deployment);
+	let remote = Remote(server, project, deployment);
 	
 	await local.hook("pre-deploy");
 	
 	await remote.checkout();
 	
-	await local.copySecrets();
+	await local.copy(server, "secrets");
 	
-	await local.copy(ECOSYSTEM);
+	await local.copy(server, ECOSYSTEM);
 	
-	await remote.command("npm install");
+	await remote.cmd("npm install");
 	
 	await remote.hook("pre-deploy");
 	

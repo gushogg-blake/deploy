@@ -1,0 +1,12 @@
+#!/bin/bash
+
+name=$1
+deployment=$2
+
+hook=./deploy/hooks/remote/$name
+
+if [ -f $hook ]; then
+	$hook $deployment
+elif [ -f $hook.js ]; then
+	node $hook.js $deployment
+fi
