@@ -12,6 +12,8 @@ module.exports = function(server, project, deployment) {
 	} = Functions(server, project, deployment);
 	
 	async function checkout(ref) {
+		console.log(`Remote: checkout ${ref}`);
+		
 		await remoteScript(here.child("remoteScripts", "checkout").path, function(path) {
 			return ssh(`${path} ${project.name} ${deployment} ${ref}`);
 		});

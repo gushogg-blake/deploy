@@ -7,7 +7,7 @@ module.exports = function(server, project, deployment) {
 	let serverRoot = "~/apps/" + project.name + "/" + deployment;
 	
 	async function remoteScript(script, run) {
-		let remotePath = `/tmp/deploy-${fs(script).name}}`;
+		let remotePath = `/tmp/deploy-${fs(script).name}`;
 		
 		await copy(script, remotePath);
 		await ssh(`chmod +x ${remotePath}`);
@@ -15,8 +15,8 @@ module.exports = function(server, project, deployment) {
 		await ssh(`rm ${remotePath}`);
 	}
 	
-	async function findHook(where, name) {
-		let hook = root.child("hooks", where, name);
+	async function findHook(name) {
+		let hook = root.child("deploy/hooks/local", name);
 		
 		if (await hook.exists()) {
 			return hook.path;
@@ -28,10 +28,12 @@ module.exports = function(server, project, deployment) {
 	}
 	
 	async function localHook(name) {
-		let hook = await findHook("local", name);
+		let hook = await findHook(name);
 		
 		if (hook) {
-			await cmd(`bash ${hook} ${project.name} ${deployment}`);
+			console.log(`${name} hook`);
+			
+			await cmd(`bash ${hook} ${server} ${project.name} ${deployment}`);
 		}
 	}
 	
@@ -42,11 +44,19 @@ module.exports = function(server, project, deployment) {
 	}
 	
 	async function ssh(command) {
+		console.log(`Remote: ${command}`);
+		
 		await cmd(`ssh ${server} "cd ${serverRoot}; ${command}"`);
 	}
 	
 	async function copy(local, remote=null) {
-		await cmd(`scp -pr ${local} ${server}:${remote || serverRoot + "/"}`);
+		if (!remote) {
+			remote = serverRoot + "/";
+		}
+		
+		console.log(`Copy ${local} ${remote}`);
+		
+		await cmd(`scp -pr ${local} ${server}:${remote}`);
 	}
 	
 	return {

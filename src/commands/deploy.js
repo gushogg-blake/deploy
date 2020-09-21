@@ -26,11 +26,7 @@ assumes:
 	let local = Local(server, project, deployment);
 	let remote = Remote(server, project, deployment);
 	
-	console.log("Pre-deploy hook");
-	
 	await local.hook("pre-deploy");
-	
-	console.log("Remote: checking out repo");
 	
 	await remote.checkout(ref);
 	
@@ -40,33 +36,19 @@ assumes:
 	
 	await fs("/tmp/.env").write(env);
 	
-	console.log("Copying .env file");
-	
 	await local.copy("/tmp/.env");
 	
 	if (await fs("deploy/secrets").exists()) {
-		console.log("Copying secrets");
-		
 		await local.copy("deploy/secrets", "secrets/" + project.name);
 	}
 	
-	console.log("Copying ecosystem file");
-	
 	await local.copy(ECOSYSTEM);
-	
-	console.log("Remote: npm install");
 	
 	await remote.cmd("npm install");
 	
-	console.log("Post-checkout hook");
-	
 	await local.hook("post-checkout");
 	
-	console.log("Remote: pre-deploy hook");
-	
 	await remote.hook("pre-deploy");
-	
-	console.log("Remote: start/restart");
 	
 	await remote.startOrRestart();
 })();

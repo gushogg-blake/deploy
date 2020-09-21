@@ -5,9 +5,14 @@ project=$2
 deployment=$3
 
 hook=./deploy/hooks/remote/$name
+msg="Remote hook: $name"
 
 if [ -f $hook ]; then
+	echo $msg
+	
 	bash $hook $project $deployment
 elif [ -f $hook.js ]; then
+	echo $msg
+	
 	node $hook.js $project $deployment
 fi
