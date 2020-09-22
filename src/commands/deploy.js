@@ -4,6 +4,7 @@ let fs = require("flowfs");
 let yargs = require("yargs");
 let verify = require("../utils/verify.js");
 let findAppConfig = require("../utils/findAppConfig");
+let getCurrentBranch = require("../utils/getCurrentBranch");
 let project = require("../__project");
 let {ECOSYSTEM} = require("../filenames");
 let Local = require("../Local");
@@ -18,7 +19,8 @@ assumes:
 */
 
 (async function() {
-	let [server, deployment, ref="master"] = yargs.argv._;
+	let [server, deployment] = yargs.argv._;
+	let ref = await getCurrentBranch();
 	
 	verify.appInEcosystem(project, deployment);
 	
