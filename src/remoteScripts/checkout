@@ -5,20 +5,19 @@ deployment=$2
 ref=$3
 
 root=$HOME/apps/$project/$deployment
-nodeModules=$root/node_modules
-tmpNodeModules=/tmp/$project-$deployment-node_modules
 
-if [ -d $nodeModules ]; then
-	mv $nodeModules $tmpNodeModules
+mkdir -p $root
+cd $root
+
+if [ ! -d .git ]; then
+	git init
+	git remote add origin $HOME/git/$project.git
 fi
 
-rm -rf $root
-mkdir -p $root
+git fetch
 
-cd $HOME/git/$project.git
-
-GIT_WORK_TREE=$root git checkout -f $ref
-
-if [ -d $tmpNodeModules ]; then
-	mv $tmpNodeModules $nodeModules
+if [[ -z $(git branch --list $ref) ]]; then
+	git checkout -b $ref origin/$ref
+else
+	git checkout $ref
 fi
