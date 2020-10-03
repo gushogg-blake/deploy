@@ -20,4 +20,5 @@ if [[ -z $(git branch --list $ref) ]]; then
 	git checkout -b $ref origin/$ref
 else
 	git checkout $ref
+	git reset --hard origin/$ref
 fi
