@@ -1,21 +1,12 @@
-let {exec} = require("child_process");
+let {spawn} = require("child_process");
+let {default: parseCommand} = require("string-argv");
 
 module.exports = function(cmd, stdin=null) {
+	let [command, ...args] = parseCommand(cmd.replace(/\n/g, " "));
+	
 	return new Promise(function(resolve, reject) {
-		let child = exec(cmd.replace(/\n/g, " "), function(error, stdout, stderr) {
-			if (stdout) {
-				console.log(stdout);
-			}
-			
-			if (stderr) {
-				console.error(stderr);
-			}
-			
-			if (error) {
-				reject(error);
-			} else {
-				resolve();
-			}
+		let child = spawn(command, args, {
+			stdio: ["pipe", "inherit", "inherit"],
 		});
 		
 		if (stdin) {
@@ -23,5 +14,13 @@ module.exports = function(cmd, stdin=null) {
 		}
 		
 		child.stdin.end();
+		
+		child.on("exit", function(code) {
+			if (code === 0) {
+				resolve();
+			} else {
+				reject(code);
+			}
+		});
 	});
 }
