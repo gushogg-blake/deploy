@@ -40,9 +40,7 @@ assumes:
 	
 	await local.copy("/tmp/.env");
 	
-	if (await fs("deploy/secrets").exists()) {
-		await local.copy("deploy/secrets", "secrets/" + project.name);
-	}
+	await local.copySecrets();
 	
 	await local.copy(ECOSYSTEM);
 	
