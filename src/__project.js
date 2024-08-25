@@ -14,7 +14,7 @@ while (!fs.existsSync(dir.child(PACKAGE).path)) {
 }
 
 let root = dir.path;
-let ecosystem = require(root + "/" + ECOSYSTEM);
+let ecosystem = fs.existsSync(dir.child(ECOSYSTEM).path) ? require(root + "/" + ECOSYSTEM) : null;
 let package = require(root + "/" + PACKAGE);
 
 module.exports =  {

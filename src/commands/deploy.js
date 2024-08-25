@@ -51,4 +51,8 @@ assumes:
 	await remote.hook("pre-deploy");
 	
 	await remote.startOrRestart();
+	
+	await remote.hook("post-deploy");
+	
+	await local.hook("post-deploy");
 })();

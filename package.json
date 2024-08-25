@@ -5,7 +5,7 @@
 	"author": "Gus Hogg-Blake",
 	"private": true,
 	"dependencies": {
-		"flowfs": "^4.0.0",
+		"flowfs": "^3.2.0-a",
 		"string-argv": "^0.3.1",
 		"yargs": "^6.5.0"
 	},

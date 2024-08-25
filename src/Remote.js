@@ -28,6 +28,10 @@ module.exports = function(server, project, deployment) {
 	}
 	
 	async function startOrRestart() {
+		if (!project.ecosystem) {
+			return;
+		}
+		
 		await ssh(`pm2 startOrRestart ${ECOSYSTEM} --only ${project.name}-${deployment}`);
 	}
 	
