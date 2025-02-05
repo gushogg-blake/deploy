@@ -24,7 +24,7 @@ assumes:
 	
 	verify.appInEcosystem(project, deployment);
 	
-	let app = findAppConfig(project, deployment);
+	let appConfig = findAppConfig(project, deployment);
 	let local = Local(server, project, deployment);
 	let remote = Remote(server, project, deployment);
 	
@@ -32,17 +32,21 @@ assumes:
 	
 	await remote.checkout(ref);
 	
-	console.log("Creating .env file");
-	
-	let env = Object.entries(app.env).map(entry => entry.join("=")).join("\n") + "\n";
-	
-	await fs("/tmp/.env").write(env);
-	
-	await local.copy("/tmp/.env");
+	if (appConfig?.env) {
+		console.log("Creating .env file");
+		
+		let env = Object.entries(appConfig.env).map(entry => entry.join("=")).join("\n") + "\n";
+		
+		await fs("/tmp/.env").write(env);
+		
+		await local.copy("/tmp/.env");
+	}
 	
 	await local.copySecrets();
 	
-	await local.copy(ECOSYSTEM);
+	if (project.ecosystem) {
+		await local.copy(ECOSYSTEM);
+	}
 	
 	await remote.cmd("npm install");
 	

@@ -13,7 +13,7 @@ The name of the project (referred to as "project" below) is read from package.js
 Structure
 ---------
 
-Local, per project:
+Local, per sproject:
 
 ./deploy
 

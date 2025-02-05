@@ -4,7 +4,7 @@ let error = require("./error");
 
 module.exports = {
 	appInEcosystem(project, deployment) {
-		if (!findAppConfig(project, deployment)) {
+		if (project.ecosystem && !findAppConfig(project, deployment)) {
 			error(`No app ${project.name}-${deployment} found in ${ECOSYSTEM}`);
 		}
 	},
