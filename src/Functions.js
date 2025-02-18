@@ -31,8 +31,6 @@ module.exports = function(server, project, deployment) {
 		let hook = await findHook(name);
 		
 		if (hook) {
-			console.log(`${name} hook`);
-			
 			await cmd(`bash ${hook} ${server} ${project.name} ${deployment}`);
 		}
 	}
@@ -44,8 +42,6 @@ module.exports = function(server, project, deployment) {
 	}
 	
 	async function ssh(command) {
-		console.log(`Remote: ${command}`);
-		
 		await cmd(`ssh ${server} "cd ${serverRoot}; ${command}"`);
 	}
 	
