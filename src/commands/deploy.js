@@ -32,16 +32,6 @@ assumes:
 	
 	await remote.checkout(ref);
 	
-	if (appConfig?.env) {
-		console.log("Creating .env file");
-		
-		let env = Object.entries(appConfig.env).map(entry => entry.join("=")).join("\n") + "\n";
-		
-		await fs("/tmp/.env").write(env);
-		
-		await local.copy("/tmp/.env");
-	}
-	
 	await local.copySecrets();
 	await local.copy(".env");
 	
