@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
-let fs = require("flowfs");
 let yargs = require("yargs");
 let verify = require("../utils/verify.js");
-let findAppConfig = require("../utils/findAppConfig");
 let getCurrentBranch = require("../utils/getCurrentBranch");
 let project = require("../__project");
 let {ECOSYSTEM} = require("../filenames");
@@ -24,7 +22,6 @@ assumes:
 	
 	verify.appInEcosystem(project, deployment);
 	
-	let appConfig = findAppConfig(project, deployment);
 	let local = Local(server, project, deployment);
 	let remote = Remote(server, project, deployment);
 	
