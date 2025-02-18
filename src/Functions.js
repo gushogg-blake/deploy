@@ -50,11 +50,15 @@ module.exports = function(server, project, deployment) {
 	}
 	
 	async function copy(local, remote=null) {
+		if (!await fs(local).exists()) {
+			console.log(`Copy: not found: ${local}`);
+			
+			return;
+		}
+		
 		if (!remote) {
 			remote = serverRoot + "/";
 		}
-		
-		console.log(`Copy ${local} ${remote}`);
 		
 		await cmd(`scp -pr ${local} ${server}:${remote}`);
 	}

@@ -43,6 +43,7 @@ assumes:
 	}
 	
 	await local.copySecrets();
+	await local.copy(".env");
 	
 	if (project.ecosystem) {
 		await local.copy(ECOSYSTEM);

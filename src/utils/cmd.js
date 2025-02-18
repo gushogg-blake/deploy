@@ -5,6 +5,8 @@ module.exports = function(cmd, stdin=null) {
 	let [command, ...args] = parseCommand(cmd.replace(/\n/g, " "));
 	
 	return new Promise(function(resolve, reject) {
+		console.log(cmd);
+		
 		let child = spawn(command, args, {
 			stdio: ["pipe", "inherit", "inherit"],
 		});
